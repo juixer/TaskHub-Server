@@ -79,6 +79,19 @@ async function run() {
       }
     });
 
+
+    // get single task info
+    app.get('/editTask/:id', async (req, res) => {
+      try{
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await tasks.findOne(query);
+        res.send(result);
+      }catch(err){
+        console.log(err);
+      }
+    })
+
     // add tasks into database
     app.post("/tasks", async (req, res) => {
       try {
@@ -89,6 +102,27 @@ async function run() {
         console.log(err);
       }
     });
+
+    app.put('/editTask/:id', async (req, res) => {
+      try{
+        const id = req.params.id;
+        const taskInfo =  req.body
+        const query = { _id: new ObjectId(id) };
+        const updateDoc = {
+          $set: {
+            task_name: taskInfo.task_name,
+            task_details: taskInfo.task_details,
+            task_deadline_date: taskInfo.task_deadline_date,
+            task_priority: taskInfo.task_priority,
+            task_deadline_time: taskInfo.task_deadline_time
+          }
+        }
+        const result = await tasks.updateOne(query, updateDoc)
+        res.send(result);
+      }catch(err){
+        console.log(err);
+      }
+    })
 
     // make todo Task  by drag
     app.patch("/makeTodoTask/:id", async (req, res) => {

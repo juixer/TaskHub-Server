@@ -40,6 +40,7 @@ async function run() {
         console.log(err);
       }
     });
+
     // get user wise ongoing tasks
     app.get("/ongoingTasks/:email", async (req, res) => {
       try {
@@ -54,6 +55,23 @@ async function run() {
         console.log(err);
       }
     });
+    // get user wise completed tasks
+    app.get("/completedTasks/:email", async (req, res) => {
+      try {
+        const email = req.params.email;
+        const query = {
+          user_email: email,
+          task_status: "Completed",
+        };
+        const result = await tasks.find(query).toArray();
+        res.send(result);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
+
+
     // add tasks into database
     app.post("/tasks", async (req, res) => {
       try {

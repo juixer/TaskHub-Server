@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 5000;
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 
 app.use(express.json());
@@ -34,7 +34,10 @@ async function run() {
           user_email: email,
           task_status: "To-do",
         };
-        const result = await tasks.find(query).toArray();
+        const option = {
+          sort: { _id: -1 },
+        };
+        const result = await tasks.find(query, option).toArray();
         res.send(result);
       } catch (err) {
         console.log(err);
@@ -49,7 +52,10 @@ async function run() {
           user_email: email,
           task_status: "Ongoing",
         };
-        const result = await tasks.find(query).toArray();
+        const option = {
+          sort: { _id: -1 },
+        };
+        const result = await tasks.find(query, option).toArray();
         res.send(result);
       } catch (err) {
         console.log(err);
@@ -63,20 +69,38 @@ async function run() {
           user_email: email,
           task_status: "Completed",
         };
-        const result = await tasks.find(query).toArray();
+        const option = {
+          sort: { _id: -1 },
+        };
+        const result = await tasks.find(query, option).toArray();
         res.send(result);
       } catch (err) {
         console.log(err);
       }
     });
 
-
-
     // add tasks into database
     app.post("/tasks", async (req, res) => {
       try {
         const task = req.body;
         const result = await tasks.insertOne(task);
+        res.send(result);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
+    // make ongoing Task  by drag
+    app.patch("/makeOngoingTask/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const updateDoc = {
+          $set: {
+            task_status: "Ongoing",
+          },
+        };
+        const result = await tasks.updateOne(query, updateDoc);
         res.send(result);
       } catch (err) {
         console.log(err);

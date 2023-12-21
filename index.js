@@ -92,6 +92,40 @@ async function run() {
       }
     })
 
+    // get users tasks count
+
+    app.get('/getCount/:email', async (req, res) => {
+      try{
+        const email = req.params.email;
+        const taskQuery = {user_email: email}
+        const taskCountResult = await tasks.countDocuments(taskQuery)
+
+        const todoQuery = {
+          user_email: email,
+          task_status: "To-do",
+        }
+        const todoCountResult = await tasks.countDocuments(todoQuery)
+
+
+        const ongoingQuery = {
+          user_email: email,
+          task_status: "Ongoing",
+        }
+        const ongoingCountResult = await tasks.countDocuments(ongoingQuery)
+
+
+        const completedQuery = {
+          user_email: email,
+          task_status: "Completed",
+        }
+        const completedCountResult = await tasks.countDocuments(completedQuery)
+
+        res.send({todoCountResult, ongoingCountResult, taskCountResult, completedCountResult})
+      }catch(err){
+        console.log(err);
+      }
+    })
+
     // add tasks into database
     app.post("/tasks", async (req, res) => {
       try {

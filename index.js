@@ -133,7 +133,7 @@ async function run() {
         const query = { _id: new ObjectId(id) };
         const updateDoc = {
           $set: {
-            task_status: "Ongoing",
+            task_status: "Completed",
           },
         };
         const result = await tasks.updateOne(query, updateDoc);
@@ -142,6 +142,18 @@ async function run() {
         console.log(err);
       }
     });
+
+    // make a task delete
+    app.delete('/deleteTask/:id', async (req, res) => {
+      try{
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)}
+        const result = await tasks.deleteOne(query)
+        res.send(result)
+      }catch(err){
+        console.log(err);
+      }
+    })
 
     await client.db("admin").command({ ping: 1 });
     console.log(

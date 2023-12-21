@@ -26,8 +26,22 @@ async function run() {
     const database = client.db("todoHub");
     const tasks = database.collection("tasks");
 
+    // get user wise todo tasks
+    app.get("/todoTasks/:email", async (req, res) => {
+      try {
+        const email = req.params.email;
+        const query = {
+          user_email: email,
+          task_status: "To-do",
+        };
+        const result = await tasks.find(query).toArray();
+        res.send(result);
+      } catch (err) {
+        console.log(err);
+      }
+    });
     // get user wise ongoing tasks
-    app.get("/tasks/:email", async (req, res) => {
+    app.get("/ongoingTasks/:email", async (req, res) => {
       try {
         const email = req.params.email;
         const query = {

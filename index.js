@@ -90,6 +90,24 @@ async function run() {
       }
     });
 
+    // make todo Task  by drag
+    app.patch("/makeTodoTask/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const updateDoc = {
+          $set: {
+            task_status: "To-do",
+          },
+        };
+        const result = await tasks.updateOne(query, updateDoc);
+        res.send(result);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
+
     // make ongoing Task  by drag
     app.patch("/makeOngoingTask/:id", async (req, res) => {
       try {

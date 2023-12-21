@@ -125,6 +125,24 @@ async function run() {
       }
     });
 
+
+    // make complete Task  by drag
+    app.patch("/makeCompletedTask/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const updateDoc = {
+          $set: {
+            task_status: "Ongoing",
+          },
+        };
+        const result = await tasks.updateOne(query, updateDoc);
+        res.send(result);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
